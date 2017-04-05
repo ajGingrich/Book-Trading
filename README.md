@@ -9,8 +9,9 @@ The full description is here: https://www.freecodecamp.com/challenges/manage-a-b
 User Stories
 ------
 
-* I can get the image URLs, alt text and page urls for a set of images relating to a given search string.
-* I can paginate through the responses by adding a ?offset=2 parameter to the URL.
-* I can get a list of the most recently submitted search strings.
+* I can view all books posted by every user.
+* I can add a new book.
+* I can update my settings to store my full name, city, and state.
+* I can propose a trade and wait for the other user to accept the trade.
 
-Check out the app at [https://image-search320.herokuapp.com/](https://image-search320.herokuapp.com/)
+Check out the app at [https://github.com/ajGingrich/Book-Trading](https://github.com/ajGingrich/Book-Trading)
