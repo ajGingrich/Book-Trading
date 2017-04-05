@@ -14,4 +14,4 @@ User Stories
 * I can update my settings to store my full name, city, and state.
 * I can propose a trade and wait for the other user to accept the trade.
 
-Check out the app at [https://github.com/ajGingrich/Book-Trading](https://github.com/ajGingrich/Book-Trading)
+Check out the app at [https://booktrading320.herokuapp.com/](https://booktrading320.herokuapp.com/)
