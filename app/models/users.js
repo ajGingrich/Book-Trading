@@ -9,19 +9,26 @@ var User = new Schema({
         token: String,
         email: String,
         name: String,
-        username: String
+        username: String,
+        city: String,
+        state: String
     },
     twitter: {
         id: String,
         token: String,
         displayName: String,
-        username: String
+        username: String,
+        name: String,
+        city: String,
+        state: String
     },
     google: {
         id: String,
         token: String,
         email: String,
-        name: String
+        name: String,
+        city: String,
+        state: String
     }
 });
 

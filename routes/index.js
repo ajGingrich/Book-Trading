@@ -1,6 +1,8 @@
 var express = require('express');
 var passport = require('passport');
 var router = express.Router();
+var BookHandler = require('../app/controllers/bookHandler.server');
+var bookHandler = new BookHandler();
 
 //home page
 router.get('/', function(req, res, next) {
@@ -11,6 +13,9 @@ router.get('/', function(req, res, next) {
 router.get('/profile', isLoggedIn, function(req, res) {
     res.render('profile', { user: req.user });
 });
+
+//profile
+router.post('/updateProf', isLoggedIn, bookHandler.updateProfile);
 
 //logout
 router.get('/logout', function(req, res) {

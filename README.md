@@ -1,4 +1,4 @@
-# Book Trading
+# Manage a Book Trading Club
 
 Objective 
 ------
