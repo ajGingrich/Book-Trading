@@ -3,19 +3,20 @@
   <% include partials/head.ejs %>
   <body>
     <% include partials/nav.ejs %>
-      <h3>Trade some books brah</h3>
+
+    <% if (message.length > 0) { %>
+      <div class="alert alert-danger"><p><%= message %></p></div>
+    <% } %>
+
+    <h3>Trade some books brah</h3>
+
+    <form id="searchForm" action="/search" method="post">
+      <div class="form-inline">
+        <input type="text" class="form-control" name="searchQuery" placeholder="Look for some books brah" required>
+        <button type="submit" class="btn btn-primary"><span>Go</span></button>
+      </div>
+    </form>
     <% include partials/footer.ejs %>
   </body>
-
-  <!-- jQuery and jQuery UI -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-
-  <!-- Bootstrap Javascript -->
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
-  integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-
-  <!-- Client JavaScript -->
-  <script src="/javascripts/script.js"></script>
 
 </html>

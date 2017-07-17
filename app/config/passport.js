@@ -37,6 +37,8 @@ module.exports = function (passport) {
                         newUser.facebook.token = token;
                         newUser.facebook.name = profile.name.givenName + ' ' + profile.name.familyName;
                         //newUser.facebook.email = (profile.emails[0].value || '').toLowerCase();
+                        newUser.facebook.city = "Not available";
+                        newUser.facebook.state = "Not available";
 
                         newUser.save(function(err) {
                             if (err)
@@ -66,6 +68,9 @@ module.exports = function (passport) {
                         newUser.twitter.token       = token;
                         newUser.twitter.username    = profile.username;
                         newUser.twitter.displayName = profile.displayName;
+                        newUser.twitter.name = "Not available";
+                        newUser.twitter.city = "Not available";
+                        newUser.twitter.state = "Not available";
                         newUser.save(function(err) {
                             if (err)
                                 throw err;
@@ -94,6 +99,8 @@ module.exports = function (passport) {
                         newUser.google.token = token;
                         newUser.google.name = profile.displayName;
                         newUser.google.email = profile.emails[0].value;
+                        newUser.google.city = "Not available";
+                        newUser.google.state = "Not available";
                         newUser.save(function(err) {
                             if (err)
                                 throw err;

@@ -17,6 +17,12 @@ router.get('/profile', isLoggedIn, function(req, res) {
 //profile
 router.post('/updateProf', isLoggedIn, bookHandler.updateProfile);
 
+//search
+router.post('/search', bookHandler.search);
+
+//add
+router.get('/add/:bookId/:bookPlacement', isLoggedIn, bookHandler.add);
+
 //logout
 router.get('/logout', function(req, res) {
     req.logout();
@@ -53,5 +59,6 @@ module.exports = router;
 function isLoggedIn(req, res, next) {
     if (req.isAuthenticated())
         return next();
-    res.redirect('/');
+    //console.log(req.path)
+    res.render('index', { message: 'You need to be logged in' });
 }

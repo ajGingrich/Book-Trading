@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <% include partials/head.ejs %>
+  <body>
+    <% include partials/nav.ejs %>
+    <!-- warning message -->
+    <% if (message.length > 0) { %>
+      <div class="alert alert-danger"><p><%= message %></p></div>
+    <% } %>
+    <div class="container-fluid">
+      <!-- add extra container element for Masonry -->
+      <div class="grid">
+        <div class="grid-sizer col-xs-4"></div>
+        <% if (searchArray) { %>
+          <% for (var i=0; i< searchArray.title.length; i++) { %>
+            <div class="grid-item col-xs-4">
+              <div class="grid-item-content">
+                <a href="<%- searchArray.url[i] %>" target="_blank"><img class="bookImage" src="<%- searchArray.img[i] %>"></a>
+                <a href="/add/<%- searchArray._id %>/<%- [i] %>"><img class="plusImage" src="/img/plusButton.png"></a>
+                <h5 class="firstHeader"><%- searchArray.title[i] %></h5>
+                <h5 class="secondHeader"><%- searchArray.author[i] %></h5>
+              </div>
+            </div>
+          <% } %>
+        <% } %>
+      </div>
+    </div>
+
+    <% include partials/footer.ejs %>
+  </body>
+
+</html>
