@@ -1,6 +1,7 @@
 'use strict';
 var Users = require('../models/users.js');
 var Query = require('../models/queries.js');
+var Book = require('../models/books.js');
 var request = require("request");
 
 function bookHandler () {
@@ -59,14 +60,6 @@ function bookHandler () {
     this.search = function(req,res, next) {
         var query = req.body.searchQuery;
 
-        ///set user
-        var userId = "Not available";
-        if (req.user != null) {
-            //need to check if its facebook/twitter/facebook
-            userId = "There is a user";
-        }
-
-
         var options = { method: 'GET',
             url: 'https://www.googleapis.com/books/v1/volumes',
             qs:
@@ -114,7 +107,6 @@ function bookHandler () {
                 }
             }
             var newQuery = new Query({
-                user: userId,
                 title: titles,
                 img: imgs,
                 url: urls,
@@ -130,10 +122,96 @@ function bookHandler () {
     };
 
     this.add = function(req, res, next) {
-        console.log(req.params.bookId);
-        console.log(req.params.bookPlacement);
 
-        res.render('index');
+        var userId;
+        ///get userId for facebook/twitter/google
+        if (req.user.facebook.id != null) {
+            userId = req.user.facebook.id
+        }
+        else if (req.user.twitter.id != null) {
+            userId = req.user.twitter.id;
+        }
+        else if (req.user.google.id != null) {
+            userId = req.user.google.id;
+        }
+
+        var bookId = req.params.bookId;
+        var bookPlacement = req.params.bookPlacement;
+
+        //get all the appopraite information and then save
+        ///first look up Query
+        Query.findById(bookId, function(err, doc) {
+           if (err) throw err;
+
+           var title = doc.title[bookPlacement],
+               img = doc.img[bookPlacement],
+               url = doc.url[bookPlacement],
+               author = doc.author[bookPlacement];
+
+            var newBook = new Book({
+                user: userId,
+                title: title,
+                img: img,
+                url: url,
+                author: author
+            });
+
+            newBook.save(function(err) {
+                if (err) throw err;
+                var savedBook = newBook;
+                ///get all of user's books
+                Book.find({user: userId}, function(err, doc) {
+                  if (err) throw err;
+                  res.render('myBooks', {myBooks: doc});
+                });
+
+            });
+
+        });
+    }
+
+    this.getUserBooks = function(req, res, next) {
+        var userId;
+        ///get userId for facebook/twitter/google
+        if (req.user.facebook.id != null) {
+            userId = req.user.facebook.id
+        }
+        else if (req.user.twitter.id != null) {
+            userId = req.user.twitter.id;
+        }
+        else if (req.user.google.id != null) {
+            userId = req.user.google.id;
+        }
+
+        Book.find({user: userId}, function(err, doc) {
+            if (err) throw err;
+            res.render('myBooks', {myBooks: doc});
+        });
+    };
+
+    this.remove = function(req, res, next) {
+        var bookId = req.params.bookId;
+
+        var userId;
+        ///get userId for facebook/twitter/google
+        if (req.user.facebook.id != null) {
+            userId = req.user.facebook.id
+        }
+        else if (req.user.twitter.id != null) {
+            userId = req.user.twitter.id;
+        }
+        else if (req.user.google.id != null) {
+            userId = req.user.google.id;
+        }
+
+        Book.findByIdAndRemove(bookId, function(err, doc) {
+            if (err) throw err;
+            //return all the other books
+            Book.find({user: userId}, function(err, doc) {
+                if (err) throw err;
+                res.render('myBooks', {myBooks: doc});
+            });
+        });
     }
 }
 

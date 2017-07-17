@@ -34,6 +34,14 @@ div h4 {
   background-color: #a7b5ba;
   margin-bottom: 10px; }
 
+#navSpan {
+  margin-left: 5px; }
+
+#searchForm {
+  margin: 15px 0 0 10px;
+  float: left;
+  display: inline; }
+
 nav p {
   margin: 16px 0 5px 0;
   display: inline; }

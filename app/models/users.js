@@ -3,13 +3,6 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var Books = new Schema ({
-    title: String,
-    img: String,
-    url: String,
-    price: String
-});
-
 var User = new Schema({
     facebook: {
         id: String,
@@ -18,8 +11,7 @@ var User = new Schema({
         name: String,
         username: String,
         city: String,
-        state: String,
-        books: [Books]
+        state: String
     },
     twitter: {
         id: String,
@@ -28,8 +20,7 @@ var User = new Schema({
         username: String,
         name: String,
         city: String,
-        state: String,
-        books: [Books]
+        state: String
     },
     google: {
         id: String,
@@ -37,8 +28,7 @@ var User = new Schema({
         email: String,
         name: String,
         city: String,
-        state: String,
-        books: [Books]
+        state: String
     }
 });
 

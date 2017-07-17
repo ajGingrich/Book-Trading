@@ -23,6 +23,12 @@ router.post('/search', bookHandler.search);
 //add
 router.get('/add/:bookId/:bookPlacement', isLoggedIn, bookHandler.add);
 
+//add
+router.get('/remove/:bookId/', isLoggedIn, bookHandler.remove);
+
+//add
+router.get('/userBooks', isLoggedIn, bookHandler.getUserBooks);
+
 //logout
 router.get('/logout', function(req, res) {
     req.logout();

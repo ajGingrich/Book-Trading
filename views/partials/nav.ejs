@@ -1,5 +1,12 @@
 <div class="container-fluid nav-container">
   <h4>Andrew's Book Trading App</h4>
+  <form id="searchForm" action="/search" method="post">
+    <div class="form-inline">
+      <input type="text" class="form-control" name="searchQuery" placeholder="Search Books" required>
+      <button type="submit" class="btn btn-primary"><span>Go</span></button>
+      <span id="navSpan">Powered by <a href="https://developers.google.com/books/" target="_blank">Google Books APIs</a></span>
+    </div>
+  </form>
     <% if (login) { %>
   <nav>
     <a class="menu" href="/">Home</a>

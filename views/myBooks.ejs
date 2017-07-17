@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <% include partials/head.ejs %>
+  <body>
+    <% include partials/nav.ejs %>
+
+    <!-- warning message -->
+    <% if (message.length > 0) { %>
+      <div class="alert alert-danger"><p><%= message %></p></div>
+    <% } %>
+
+    <div class="container-fluid">
+      <!-- add extra container element for Masonry -->
+      <div class="grid">
+        <div class="grid-sizer col-xs-4"></div>
+        <% if (myBooks) { %>
+          <% for (var i=0; i< myBooks.length; i++) { %>
+            <div class="grid-item col-xs-4">
+              <div class="grid-item-content">
+                <a href="<%- myBooks[i].url %>" target="_blank"><img class="bookImage" src="<%- myBooks[i].img %>"></a>
+                <a href="/remove/<%- myBooks[i]._id %>"><img class="plusImage" src="/img/remove.png"></a>
+                <h5 class="firstHeader"><%- myBooks[i].title %></h5>
+                <h5 class="secondHeader"><%- myBooks[i].title %></h5>
+              </div>
+            </div>
+          <% } %>
+        <% } %>
+      </div>
+    </div>
+
+    <% include partials/footer.ejs %>
+  </body>
+
+</html>
