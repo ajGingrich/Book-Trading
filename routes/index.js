@@ -11,12 +11,12 @@ router.get('/', bookHandler.getBooks, function(req, res) {
 });
 
 //profile
-router.get('/profile', isLoggedIn, function(req, res) {
+router.get('/profile', isLoggedIn, bookHandler.showTrades, function(req, res) {
     res.render('profile', { user: req.user });
 });
 
 //profile
-router.post('/updateProf', isLoggedIn, bookHandler.updateProfile);
+router.post('/updateProf', isLoggedIn, bookHandler.showTrades, bookHandler.updateProfile);
 
 //search for book
 router.post('/search', bookHandler.search);

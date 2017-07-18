@@ -133,9 +133,9 @@ function bookHandler () {
 
     this.add = function(req, res, next) {
 
-        var userId;
+        var userId = req.user._id;
         ///get userId for facebook/twitter/google
-        if (req.user.facebook.id != null) {
+        /*if (req.user.facebook.id != null) {
             userId = req.user.facebook.id
         }
         else if (req.user.twitter.id != null) {
@@ -143,7 +143,7 @@ function bookHandler () {
         }
         else if (req.user.google.id != null) {
             userId = req.user.google.id;
-        }
+        }*/
 
         var bookId = req.params.bookId;
         var bookPlacement = req.params.bookPlacement;
@@ -181,7 +181,7 @@ function bookHandler () {
     };
 
     this.getUserBooks = function(req, res, next) {
-        var userId;
+        /*var userId;
         ///get userId for facebook/twitter/google
         if (req.user.facebook.id != null) {
             userId = req.user.facebook.id
@@ -191,7 +191,8 @@ function bookHandler () {
         }
         else if (req.user.google.id != null) {
             userId = req.user.google.id;
-        }
+        }*/
+        var userId = req.user._id;
 
         //find user's book
         Book.find({user: userId}, function(err, doc) {
@@ -203,7 +204,7 @@ function bookHandler () {
     this.remove = function(req, res, next) {
         var bookId = req.params.bookId;
 
-        var userId;
+        /*var userId;
         ///get userId for facebook/twitter/google
         if (req.user.facebook.id != null) {
             userId = req.user.facebook.id
@@ -213,7 +214,8 @@ function bookHandler () {
         }
         else if (req.user.google.id != null) {
             userId = req.user.google.id;
-        }
+        }*/
+        var userId = req.user._id;
 
         //find book to remove
         Book.findByIdAndRemove(bookId, function(err, doc) {
@@ -228,8 +230,9 @@ function bookHandler () {
 
     this.exchange = function(req, res, next) {
         var bookId = req.params.bookId;
+        var userId = req.user._id;
 
-        var userId;
+        /*var userId;
         ///get userId for facebook/twitter/google
         if (req.user.facebook.id != null) {
             userId = req.user.facebook.id
@@ -239,7 +242,7 @@ function bookHandler () {
         }
         else if (req.user.google.id != null) {
             userId = req.user.google.id;
-        }
+        }*/
 
         //find user's book
         Book.find({user: userId}, function(err, doc) {
@@ -268,11 +271,9 @@ function bookHandler () {
     this.exchangeFinal = function(req, res, next) {
         var exchangeUser = req.params.exchangeUser;
         var bookId = req.params.bookId;
+        var userId = req.user._id;
 
-        console.log(exchangeUser);
-        console.log(bookId);
-
-        var userId;
+        /*var userId;
 
         ///get userId for facebook/twitter/google
         ///why didn't i just use id of doc?! fix?! save a lot of code
@@ -284,7 +285,7 @@ function bookHandler () {
         }
         else if (req.user.google.id != null) {
             userId = req.user.google.id;
-        }
+        }*/
 
         var newTrade = new Trade({
             userSending: userId,
@@ -302,9 +303,12 @@ function bookHandler () {
             });
 
         })
+    };
 
-
-    }
+    this.showTrades = function(req,res, next) {
+        console.log(req.user._id);
+        return next();
+    };
 }
 
 module.exports = bookHandler;
