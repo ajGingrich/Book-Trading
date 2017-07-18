@@ -6,7 +6,8 @@ var Schema = mongoose.Schema;
 var Trade = new Schema({
     userSending: String,
     userReceiving: String,
-    bookId: String
+    bookSending: String,
+    bookReceiving: String
 });
 
 module.exports = mongoose.model('Trade', Trade);

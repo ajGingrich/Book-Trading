@@ -4,6 +4,7 @@ var Query = require('../models/queries.js');
 var Book = require('../models/books.js');
 var Trade = require('../models/trades.js');
 var request = require("request");
+var _ = require('lodash');
 
 function bookHandler () {
 
@@ -134,17 +135,6 @@ function bookHandler () {
     this.add = function(req, res, next) {
 
         var userId = req.user._id;
-        ///get userId for facebook/twitter/google
-        /*if (req.user.facebook.id != null) {
-            userId = req.user.facebook.id
-        }
-        else if (req.user.twitter.id != null) {
-            userId = req.user.twitter.id;
-        }
-        else if (req.user.google.id != null) {
-            userId = req.user.google.id;
-        }*/
-
         var bookId = req.params.bookId;
         var bookPlacement = req.params.bookPlacement;
 
@@ -181,17 +171,6 @@ function bookHandler () {
     };
 
     this.getUserBooks = function(req, res, next) {
-        /*var userId;
-        ///get userId for facebook/twitter/google
-        if (req.user.facebook.id != null) {
-            userId = req.user.facebook.id
-        }
-        else if (req.user.twitter.id != null) {
-            userId = req.user.twitter.id;
-        }
-        else if (req.user.google.id != null) {
-            userId = req.user.google.id;
-        }*/
         var userId = req.user._id;
 
         //find user's book
@@ -203,18 +182,6 @@ function bookHandler () {
 
     this.remove = function(req, res, next) {
         var bookId = req.params.bookId;
-
-        /*var userId;
-        ///get userId for facebook/twitter/google
-        if (req.user.facebook.id != null) {
-            userId = req.user.facebook.id
-        }
-        else if (req.user.twitter.id != null) {
-            userId = req.user.twitter.id;
-        }
-        else if (req.user.google.id != null) {
-            userId = req.user.google.id;
-        }*/
         var userId = req.user._id;
 
         //find book to remove
@@ -231,18 +198,6 @@ function bookHandler () {
     this.exchange = function(req, res, next) {
         var bookId = req.params.bookId;
         var userId = req.user._id;
-
-        /*var userId;
-        ///get userId for facebook/twitter/google
-        if (req.user.facebook.id != null) {
-            userId = req.user.facebook.id
-        }
-        else if (req.user.twitter.id != null) {
-            userId = req.user.twitter.id;
-        }
-        else if (req.user.google.id != null) {
-            userId = req.user.google.id;
-        }*/
 
         //find user's book
         Book.find({user: userId}, function(err, doc) {
@@ -262,7 +217,11 @@ function bookHandler () {
                     });
                 }
                 else {
-                    res.render('exchange', {myBooks: doc, exchangeBook: book});
+                    res.render('exchange', {
+                        myBooks: doc,
+                        exchangeBook: book,
+                        bookReceiving: bookId
+                    });
                 }
             });
         });
@@ -270,27 +229,15 @@ function bookHandler () {
 
     this.exchangeFinal = function(req, res, next) {
         var exchangeUser = req.params.exchangeUser;
-        var bookId = req.params.bookId;
+        var bookSending = req.params.bookId;
+        var bookReceiving = req.params.bookReceiving;
         var userId = req.user._id;
-
-        /*var userId;
-
-        ///get userId for facebook/twitter/google
-        ///why didn't i just use id of doc?! fix?! save a lot of code
-        if (req.user.facebook.id != null) {
-            userId = req.user.facebook.id
-        }
-        else if (req.user.twitter.id != null) {
-            userId = req.user.twitter.id;
-        }
-        else if (req.user.google.id != null) {
-            userId = req.user.google.id;
-        }*/
 
         var newTrade = new Trade({
             userSending: userId,
             userReceiving: exchangeUser,
-            bookId: bookId
+            bookSending: bookSending,
+            bookReceiving: bookReceiving
         });
 
         //render myBooks with Trade message
@@ -299,15 +246,66 @@ function bookHandler () {
 
             newTrade.save(function(err) {
                 if (err) throw err;
-                res.render('myBooks', {myBooks: doc, message:"Your trade request has been sent"});
+                res.render('myBooks', {
+                    myBooks: doc,
+                    message:"Your trade request has been sent"
+                });
             });
 
         })
     };
 
     this.showTrades = function(req,res, next) {
-        console.log(req.user._id);
-        return next();
+        var userId = req.user._id;
+        //res.locals.tradesSending = [];
+        //res.locals.tradeReceiving = [];
+
+        ///get trades for userSending and userReceiving
+        Trade.find({userSending: userId}, function(err, doc) {
+            if (err) throw err;
+
+            /// there are trades
+            if (doc.length > 0) {
+
+                ////push all of the ids into an array in order to return array
+                var sendingArray = [];
+                var receivingArray = [];
+                for (var i=0; i<doc.length; i++) {
+                    sendingArray.push(doc[i].bookSending);
+                    receivingArray.push(doc[i].bookReceiving);
+                }
+
+                //find sending books using array
+                Book.find({_id: {$in: sendingArray}}, null,  function(err, sendingBooks) {
+                    if (err) throw err;
+
+                    //sort the files to same order as array
+                    sendingBooks.sort(function (a, b) {
+                        return _.findIndex(sendingArray, function (id) { return a._id.equals(id); }) -
+                            _.findIndex(sendingArray, function (id) { return b._id.equals(id); });
+                    });
+                    res.locals.sendingBooks = sendingBooks;
+
+                    //find sending books using array
+                    Book.find({_id: {$in: receivingArray}}, null,  function(err, receivingBooks) {
+                        if (err) throw err;
+
+                        //sort the files to same order as array
+                        receivingBooks.sort(function (a, b) {
+                            return _.findIndex(receivingArray, function (id) { return a._id.equals(id); }) -
+                                _.findIndex(receivingArray, function (id) { return b._id.equals(id); });
+                        });
+
+                        res.locals.receivingBooks = receivingBooks;
+                        return next();
+                    });
+                });
+            }
+            else {
+                return next();
+            }
+        });
+
     };
 }
 

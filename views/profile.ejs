@@ -3,42 +3,102 @@
   <% include partials/head.ejs %>
   <body>
     <% include partials/nav.ejs %>
-    <h4>Your Profile</h4>
-    <% if (user.facebook.id != null) { %>
-    <h2 class="fa fa-facebook"> Facebook</h2><br>
-    <img src="https://avatars.io/gravatar/<%= user.facebook.email %>/140" class="img-circle"><br>
-    <strong>name</strong>: <%= user.facebook.name %><br>
-    <strong>city</strong>: <%= user.facebook.city %><br>
-    <strong>state</strong>: <%= user.facebook.state %>
-    <% } %>
+    <h4>Your Profile and Trades</h4>
 
-    <% if (user.twitter.id != null) { %>
-    <h2 class="fa fa-twitter"> Twitter</h2><br>
-    <img src="https://avatars.io/twitter/<%= user.twitter.username %>" class="img-circle"><br>
-    <strong>username</strong>: <%= user.twitter.username %><br>
-    <strong>displayName</strong>: <%= user.twitter.displayName %> <br>
-    <strong>name</strong>: <%= user.twitter.name %><br>
-    <strong>city</strong>: <%= user.twitter.city %><br>
-    <strong>state</strong>: <%= user.twitter.state %>
-    <% } %>
+    <div class="container-fluid">
+      <!-- add extra container element for Masonry -->
+      <div class="grid">
+        <div class="grid-sizer col-xs-3"></div>
+        <!--Profile General Info-->
+        <div class="grid-item col-xs-3">
+          <div class="grid-item-content grid-item-content--height2 profileInfo">
+              <% if (user.facebook.id != null) { %>
+                <h2 class="fa fa-facebook"> Facebook</h2><br>
+                <img src="https://avatars.io/gravatar/<%= user.facebook.email %>/140" class="img-circle"><br>
+                <strong>name</strong>: <%= user.facebook.name %><br>
+                <strong>city</strong>: <%= user.facebook.city %><br>
+                <strong>state</strong>: <%= user.facebook.state %>
+              <% } %>
 
-    <% if (user.google.id != null) { %>
-    <h2 class="fa fa-google-plus"> Google</h2><br>
-    <img src="https://avatars.io/gravatar/<%= user.google.email %>/140" class="img-circle"><br>
-    <strong>email</strong>: <%= user.google.email %><br>
-    <strong>name</strong>: <%= user.google.name %> <br>
-    <strong>city</strong>: <%= user.google.city %><br>
-    <strong>state</strong>: <%= user.google.state %>
-    <% } %>
+              <% if (user.twitter.id != null) { %>
+                <h2 class="fa fa-twitter"> Twitter</h2><br>
+                <img src="https://avatars.io/twitter/<%= user.twitter.username %>" class="img-circle"><br>
+                <strong>username</strong>: <%= user.twitter.username %><br>
+                <strong>displayName</strong>: <%= user.twitter.displayName %> <br>
+                <strong>name</strong>: <%= user.twitter.name %><br>
+                <strong>city</strong>: <%= user.twitter.city %><br>
+                <strong>state</strong>: <%= user.twitter.state %>
+              <% } %>
 
-    <form id="updateProfile" action="/updateProf" method="post">
-      <div class="form-inline">
-        <input type="text" class="form-control" name="userName" placeholder="Full Name" required>
-        <input type="text" class="form-control" name="userCity" placeholder="City" required>
-        <input type="text" class="form-control" name="userState" placeholder="State" required>
-        <button type="submit" class="btn btn-primary"><span>Update Profile</span></button>
+              <% if (user.google.id != null) { %>
+
+                <h2 class="fa fa-google-plus"> Google</h2><br>
+                <img src="https://avatars.io/gravatar/<%= user.google.email %>/140" class="img-circle"><br>
+
+                <strong>email</strong>: <%= user.google.email %><br>
+                <strong>name</strong>: <%= user.google.name %> <br>
+                <strong>city</strong>: <%= user.google.city %><br>
+                <strong>state</strong>: <%= user.google.state %>
+              <% } %>
+          </div>
+        </div>
+        <!--Update Form-->
+        <div class="grid-item col-xs-3">
+          <div class="grid-item-content grid-item-content--height2 profileInfo">
+
+            <form id="updateProfile" action="/updateProf" method="post">
+              <div class="form-group">
+                <input type="text" class="form-control" name="userName" placeholder="Full Name" required>
+              </div>
+              <div class="form-group">
+                <input type="text" class="form-control" name="userCity" placeholder="City" required>
+              </div>
+              <div class="form-group">
+                <input type="text" class="form-control" name="userState" placeholder="State" required>
+              </div>
+                <button type="submit" class="btn btn-primary"><span>Update Profile</span></button>
+            </form>
+          </div>
+        </div>
+
+        <!--Trades Grid-->
+        <% if (sendingBooks && receivingBooks) { %>
+        <% for (var i=0; i< sendingBooks.length; i++) { %>
+        <div class="grid-item col-xs-6">
+          <div class="grid-item-content grid-item-content--height2">
+
+            <div>
+              <h5 style="float: left; margin: 10px 0 0 65px">Your Book</h5>
+              <h5 style="float: right; margin: 10px 65px 0 0">Their Book</h5>
+            </div>
+
+            <div style="clear: both">
+              <a href="<%- sendingBooks[i].url %>" target="_blank"><img class="profileBookImage1" src="<%- sendingBooks[i].img %>"></a>
+              <a href="<%- receivingBooks[i].url %>" target="_blank"><img class="profileBookImage2" src="<%- receivingBooks[i].img %>"></a>
+            </div>
+
+            <div style="clear: both">
+              <h5 style="float: left; margin: 10px 0 0 30px"><%- sendingBooks[i].title %></h5>
+              <h5 style="float: right; margin: 10px 30px 0 0"><%- receivingBooks[i].title %></h5>
+            </div>
+
+            <div style="clear: both">
+              <h5 style="float: left; margin: 10px 0 0 30px"><%- sendingBooks[i].author %></h5>
+              <h5 style="float: right; margin: 10px 30px 0 0"><%- receivingBooks[i].author %></h5>
+            </div>
+
+            <div style="clear: both">
+              <button href="/acceptTrade" type="button" class="btn btn-primary">Accept</button>
+              <button href="/declineTrade" type="button" class="btn btn-danger">Decline</button>
+            </div>
+
+          </div>
+        </div>
+        <% } %>
+        <% } %>
       </div>
-    </form>
+    </div>
+
     <% include partials/footer.ejs %>
   </body>
 </html>

@@ -34,7 +34,7 @@ router.get('/userBooks', isLoggedIn, bookHandler.getUserBooks);
 router.get('/exchange/:bookId', isLoggedIn, bookHandler.exchange);
 
 //exchange final
-router.get('/exchangeFinal/:bookId/:exchangeUser', isLoggedIn, bookHandler.exchangeFinal);
+router.get('/exchangeFinal/:bookId/:exchangeUser/:bookReceiving', isLoggedIn, bookHandler.exchangeFinal);
 
 //logout
 router.get('/logout', function(req, res) {
