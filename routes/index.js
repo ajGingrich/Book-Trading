@@ -3,10 +3,11 @@ var passport = require('passport');
 var router = express.Router();
 var BookHandler = require('../app/controllers/bookHandler.server');
 var bookHandler = new BookHandler();
+var Book = require('../app/models/books.js');
 
 //home page
-router.get('/', function(req, res, next) {
-    res.render('index', { title: 'Express' });
+router.get('/', bookHandler.getBooks, function(req, res) {
+    res.render('index', {allBooks: res.locals.allBooks});
 });
 
 //profile
@@ -17,17 +18,23 @@ router.get('/profile', isLoggedIn, function(req, res) {
 //profile
 router.post('/updateProf', isLoggedIn, bookHandler.updateProfile);
 
-//search
+//search for book
 router.post('/search', bookHandler.search);
 
-//add
+//add bok
 router.get('/add/:bookId/:bookPlacement', isLoggedIn, bookHandler.add);
 
-//add
-router.get('/remove/:bookId/', isLoggedIn, bookHandler.remove);
+//remove book
+router.get('/remove/:bookId', isLoggedIn, bookHandler.remove);
 
-//add
+//show user books
 router.get('/userBooks', isLoggedIn, bookHandler.getUserBooks);
+
+//exchange
+router.get('/exchange/:bookId', isLoggedIn, bookHandler.exchange);
+
+//exchange final
+router.get('/exchangeFinal/:bookId/:exchangeUser', isLoggedIn, bookHandler.exchangeFinal);
 
 //logout
 router.get('/logout', function(req, res) {
@@ -66,5 +73,12 @@ function isLoggedIn(req, res, next) {
     if (req.isAuthenticated())
         return next();
     //console.log(req.path)
-    res.render('index', { message: 'You need to be logged in' });
+
+    res.locals.allBooks = [];
+    Book.find({}, function(err, doc) {
+        if (err) throw err;
+        res.locals.allBooks = doc;
+        res.render('index', {message: 'You need to be logged in', allBooks: res.locals.allBooks });
+    });
+
 }

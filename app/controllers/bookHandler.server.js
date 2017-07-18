@@ -2,9 +2,19 @@
 var Users = require('../models/users.js');
 var Query = require('../models/queries.js');
 var Book = require('../models/books.js');
+var Trade = require('../models/trades.js');
 var request = require("request");
 
 function bookHandler () {
+
+    this.getBooks = function(req, res, next) {
+        res.locals.allBooks = [];
+        Book.find({}, function(err, doc) {
+            if (err) throw err;
+            res.locals.allBooks = doc;
+            return next();
+        });
+    };
 
     this.updateProfile = function(req, res, next) {
         var userName = req.body.userName,
@@ -168,7 +178,7 @@ function bookHandler () {
             });
 
         });
-    }
+    };
 
     this.getUserBooks = function(req, res, next) {
         var userId;
@@ -183,6 +193,7 @@ function bookHandler () {
             userId = req.user.google.id;
         }
 
+        //find user's book
         Book.find({user: userId}, function(err, doc) {
             if (err) throw err;
             res.render('myBooks', {myBooks: doc});
@@ -204,6 +215,7 @@ function bookHandler () {
             userId = req.user.google.id;
         }
 
+        //find book to remove
         Book.findByIdAndRemove(bookId, function(err, doc) {
             if (err) throw err;
             //return all the other books
@@ -212,6 +224,86 @@ function bookHandler () {
                 res.render('myBooks', {myBooks: doc});
             });
         });
+    };
+
+    this.exchange = function(req, res, next) {
+        var bookId = req.params.bookId;
+
+        var userId;
+        ///get userId for facebook/twitter/google
+        if (req.user.facebook.id != null) {
+            userId = req.user.facebook.id
+        }
+        else if (req.user.twitter.id != null) {
+            userId = req.user.twitter.id;
+        }
+        else if (req.user.google.id != null) {
+            userId = req.user.google.id;
+        }
+
+        //find user's book
+        Book.find({user: userId}, function(err, doc) {
+            if (err) throw err;
+
+            ///find book being traded
+            Book.findById(bookId, function(err, book) {
+                if (err) throw err;
+
+                ///check that user isn't trading their own book
+                if (book.user == userId) {
+                    res.locals.allBooks = [];
+                    Book.find({}, function(err, doc) {
+                        if (err) throw err;
+                        res.locals.allBooks = doc;
+                        res.render('index', {message: "You can't trade your own book", allBooks: res.locals.allBooks });
+                    });
+                }
+                else {
+                    res.render('exchange', {myBooks: doc, exchangeBook: book});
+                }
+            });
+        });
+    };
+
+    this.exchangeFinal = function(req, res, next) {
+        var exchangeUser = req.params.exchangeUser;
+        var bookId = req.params.bookId;
+
+        console.log(exchangeUser);
+        console.log(bookId);
+
+        var userId;
+
+        ///get userId for facebook/twitter/google
+        ///why didn't i just use id of doc?! fix?! save a lot of code
+        if (req.user.facebook.id != null) {
+            userId = req.user.facebook.id
+        }
+        else if (req.user.twitter.id != null) {
+            userId = req.user.twitter.id;
+        }
+        else if (req.user.google.id != null) {
+            userId = req.user.google.id;
+        }
+
+        var newTrade = new Trade({
+            userSending: userId,
+            userReceiving: exchangeUser,
+            bookId: bookId
+        });
+
+        //render myBooks with Trade message
+        Book.find({user: userId}, function(err, doc) {
+            if (err) throw err;
+
+            newTrade.save(function(err) {
+                if (err) throw err;
+                res.render('myBooks', {myBooks: doc, message:"Your trade request has been sent"});
+            });
+
+        })
+
+
     }
 }
 
