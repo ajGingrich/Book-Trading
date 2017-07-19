@@ -36,6 +36,12 @@ router.get('/exchange/:bookId', isLoggedIn, bookHandler.exchange);
 //exchange final
 router.get('/exchangeFinal/:bookId/:exchangeUser/:bookReceiving', isLoggedIn, bookHandler.exchangeFinal);
 
+//decline trade
+router.get('/declineTrade/:sendingId/:receivingId', isLoggedIn, bookHandler.declineTrade);
+
+//decline trade
+router.get('/acceptTrade/:sendingId/:receivingId', isLoggedIn, bookHandler.acceptTrade);
+
 //logout
 router.get('/logout', function(req, res) {
     req.logout();

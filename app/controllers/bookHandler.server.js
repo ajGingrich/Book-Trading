@@ -257,8 +257,6 @@ function bookHandler () {
 
     this.showTrades = function(req,res, next) {
         var userId = req.user._id;
-        //res.locals.tradesSending = [];
-        //res.locals.tradeReceiving = [];
 
         ///get trades for userSending and userReceiving
         Trade.find({userSending: userId}, function(err, doc) {
@@ -286,7 +284,7 @@ function bookHandler () {
                     });
                     res.locals.sendingBooks = sendingBooks;
 
-                    //find sending books using array
+                    //find receiving books using array
                     Book.find({_id: {$in: receivingArray}}, null,  function(err, receivingBooks) {
                         if (err) throw err;
 
@@ -297,15 +295,63 @@ function bookHandler () {
                         });
 
                         res.locals.receivingBooks = receivingBooks;
+                        ///find tradeId for each book
                         return next();
                     });
                 });
             }
             else {
+                res.locals.sendingBooks = false;
+                res.locals.receivingBooks = false;
                 return next();
             }
         });
 
+    };
+
+    this.declineTrade = function(req, res, next) {
+        var sendingId = req.params.sendingId;
+        var receivingId = req.params.receivingId;
+
+        //find by both receiving and sending and remove
+        Trade.findOneAndRemove({bookSending: sendingId, bookReceiving: receivingId}, function(err) {
+            if (err) throw err;
+            res.redirect('/profile');
+        });
+
+    };
+
+    this.acceptTrade = function(req, res, next) {
+
+        var sendingId = req.params.sendingId;
+        var receivingId = req.params.receivingId;
+
+        Trade.findOne({bookSending: sendingId, bookReceiving: receivingId}, function(err, doc) {
+            if (err) throw err;
+
+            ///make sure user isn't accepting their own trade
+            if (req.user._id != doc.userSending) {
+                ///remove trade before update books
+                Trade.findOneAndRemove({bookSending: sendingId, bookReceiving: receivingId}, function(err) {
+                    if (err) throw err;
+
+                    //now update books
+                    ///change User Id in sending book
+                    Book.findByIdAndUpdate(sendingId, {user: doc.userReceiving}, function(err) {
+                        if (err) throw err;
+
+                        //change User Id in receiving book
+                        Book.findByIdAndUpdate(receivingId, {user: doc.userSending}, function(err) {
+                            if (err) throw err;
+                            res.redirect('/profile');
+                        });
+                    });
+                });
+            }
+            else {
+                res.redirect('/profile');
+            }
+        });
     };
 }
 

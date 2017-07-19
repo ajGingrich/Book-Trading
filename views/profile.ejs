@@ -88,8 +88,8 @@
             </div>
 
             <div style="clear: both">
-              <button href="/acceptTrade" type="button" class="btn btn-primary">Accept</button>
-              <button href="/declineTrade" type="button" class="btn btn-danger">Decline</button>
+              <a href="/acceptTrade/<%- sendingBooks[i]._id %>/<%- receivingBooks[i]._id %>" class="btn btn-primary">Accept</a>
+              <a href="/declineTrade/<%- sendingBooks[i]._id %>/<%- receivingBooks[i]._id %>"  class="btn btn-danger">Decline</a>
             </div>
 
           </div>
