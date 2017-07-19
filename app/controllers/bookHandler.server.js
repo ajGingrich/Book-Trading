@@ -259,8 +259,9 @@ function bookHandler () {
         var userId = req.user._id;
 
         ///get trades for userSending and userReceiving
-        Trade.find({userSending: userId}, function(err, doc) {
+        Trade.find({$or: [{userSending: userId}, {userReceiving:userId}]}, function(err, doc) {
             if (err) throw err;
+            console.log(doc);
 
             /// there are trades
             if (doc.length > 0) {
