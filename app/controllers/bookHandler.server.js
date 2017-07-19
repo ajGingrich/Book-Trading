@@ -261,7 +261,6 @@ function bookHandler () {
         ///get trades for userSending and userReceiving
         Trade.find({$or: [{userSending: userId}, {userReceiving:userId}]}, function(err, doc) {
             if (err) throw err;
-            console.log(doc);
 
             /// there are trades
             if (doc.length > 0) {
@@ -333,7 +332,9 @@ function bookHandler () {
             ///make sure user isn't accepting their own trade
             if (req.user._id != doc.userSending) {
                 ///remove trade before update books
-                Trade.findOneAndRemove({bookSending: sendingId, bookReceiving: receivingId}, function(err) {
+                ///find all 4 options to remove any further trades involving these books
+                //Trade.findOneAndRemove({bookSending: sendingId, bookReceiving: receivingId}, function(err) {
+                Trade.remove({$or: [{bookSending: sendingId}, {bookReceiving:receivingId}, {bookReceiving: sendingId}, {bookSending: receivingId}]},function(err) {
                     if (err) throw err;
 
                     //now update books
@@ -344,13 +345,16 @@ function bookHandler () {
                         //change User Id in receiving book
                         Book.findByIdAndUpdate(receivingId, {user: doc.userSending}, function(err) {
                             if (err) throw err;
-                            res.redirect('/profile');
+                            res.locals.message = "Trade Completed";
+                            return next();
                         });
                     });
                 });
             }
             else {
-                res.redirect('/profile');
+                res.locals.message = "You can't accept your own trade";
+                return next();
+
             }
         });
     };

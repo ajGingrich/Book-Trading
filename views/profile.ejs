@@ -3,6 +3,12 @@
   <% include partials/head.ejs %>
   <body>
     <% include partials/nav.ejs %>
+
+    <!-- warning message -->
+    <% if (message.length > 0) { %>
+    <div class="alert alert-success"><p><%= message %></p></div>
+    <% } %>
+
     <h4>Your Profile and Trades</h4>
 
     <div class="container-fluid">
@@ -68,8 +74,8 @@
           <div class="grid-item-content grid-item-content--height2">
 
             <div>
-              <h5 style="float: left; margin: 10px 0 0 65px">Your Book</h5>
-              <h5 style="float: right; margin: 10px 65px 0 0">Their Book</h5>
+              <h5 style="float: left; margin: 10px 0 0 65px">Book 1</h5>
+              <h5 style="float: right; margin: 10px 65px 0 0">Book 2</h5>
             </div>
 
             <div style="clear: both">

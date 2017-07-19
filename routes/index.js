@@ -39,8 +39,10 @@ router.get('/exchangeFinal/:bookId/:exchangeUser/:bookReceiving', isLoggedIn, bo
 //decline trade
 router.get('/declineTrade/:sendingId/:receivingId', isLoggedIn, bookHandler.declineTrade);
 
-//decline trade
-router.get('/acceptTrade/:sendingId/:receivingId', isLoggedIn, bookHandler.acceptTrade);
+//accept trade
+router.get('/acceptTrade/:sendingId/:receivingId', isLoggedIn, bookHandler.acceptTrade, bookHandler.showTrades, function(req, res) {
+    res.render('profile', { user: req.user, message: res.locals.message });
+});
 
 //logout
 router.get('/logout', function(req, res) {
